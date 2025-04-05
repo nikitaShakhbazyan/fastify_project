@@ -4,17 +4,20 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start":"node server",
-    "dev":"nodemon server"
+    "start": "node server",
+    "dev": "nodemon server"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
-  "type":"module",
+  "type": "module",
   "dependencies": {
+    "@fastify/mysql": "^5.0.2",
     "fastify": "^5.2.2",
     "fastify-swagger": "^5.2.0",
+    "mysql2": "^3.14.0",
+    "sequelize": "^6.37.7",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
