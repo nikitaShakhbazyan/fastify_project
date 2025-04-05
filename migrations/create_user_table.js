@@ -1,9 +1,9 @@
-import sequelize from "../config/sequelize";
-import User from "../models/user";
+const sequelize = require('../config/sequelize');
+const User = require('../models/user');
 
 const createTable = async () => {
     try {
-        await sequelize.sync({ force: false });
+        await sequelize.sync({ alter: true });
         console.log('Таблицы успешно синхронизированы');
     } catch (error) {
         console.error('Ошибка при синхронизации:', error);
