@@ -1,7 +1,7 @@
 const Fastify = require('fastify');
 const sequelize = require('./config/sequelize');
 const User = require('./models/user');
-
+const PORT = 5005
 const fastify = Fastify({ logger: true });
 
 fastify.post('/users', async (request, reply) => {
@@ -16,11 +16,62 @@ fastify.post('/users', async (request, reply) => {
   }
 });
 
+fastify.get('/users', async (request, reply) => {
+  try {
+    const users = await User.findAll();
+    return reply.status(200).send(users);
+  } catch (error) {
+    console.error('Ошибка при получении пользователей:', error);
+    return reply.status(500).send({ error: 'Не удалось получить пользователей' });
+  }
+});
+
+fastify.get('/users/id/:id', async (request, reply) => {
+  const {id} = request.params
+  try {
+    const users = await User.findOne({where:{id}});
+    return reply.status(200).send(users);
+  } catch (error) {
+    console.error('Ошибка при получении пользователей:', error);
+    return reply.status(500).send({ error: 'Не удалось получить пользователей' });
+  }
+});
+
+fastify.get('/users/name/:name',async (request,reply) => {
+  const {name} = request.params
+  try {
+    const users = await User.findAll({where:{name}})
+    return reply.status(200).send(users);
+  } catch (error) {
+    console.error('Ошибка при получении пользователей:', error);
+    return reply.status(500).send({ error: 'Не удалось получить пользователей' });
+  }
+})
+fastify.get('/users/names', async (request, reply) => {
+  try {
+    const users = await User.findAll({
+      attributes: ['name']
+    });
+    if (users.length === 0) {
+      return reply.status(404).send({ error: 'Пользователи не найдены' });
+    }
+    const names = users.map(user => user.name);
+
+    return reply.status(200).send(names);
+  } catch (error) {
+    console.error('Ошибка при получении пользователей:', error);
+    return reply.status(500).send({ error: 'Не удалось получить имена пользователей' });
+  }
+});
+  fastify.get('/', async (request, reply) => {
+    return { message: 'Server is running' };
+  });
+
 const start = async () => {
   try {
-    await fastify.listen({ port: 5000 });
+    await fastify.listen({ port: PORT });
     await sequelize.authenticate();
-    console.log('Сервер запущен на http://localhost:5000');
+    console.log(`Сервер запущен на http://localhost:${PORT}`);
   } catch (error) {
     fastify.log.error(error);
     process.exit(1);
