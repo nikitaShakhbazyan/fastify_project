@@ -1,6 +1,7 @@
 const Fastify = require('fastify');
 const sequelize = require('./config/sequelize');
 const User = require('./models/user');
+const Employee = require('./models/employee')
 const PORT = 5005
 const fastify = Fastify({ logger: true });
 
@@ -66,6 +67,32 @@ fastify.get('/users/names', async (request, reply) => {
   fastify.get('/', async (request, reply) => {
     return { message: 'Server is running' };
   });
+
+fastify.post('/employee/add',async (request,reply) => {
+  const {firstName,lastName} = request.body;
+  console.log(request.body);
+  try {
+    if (!firstName) {
+      return reply.status(400).send({ error: 'First name is required' });
+    }
+    const newEmployee = await Employee.create({firstName,lastName})
+    return reply.status(201).send(newEmployee);
+  } catch (error) {
+        console.error('Ошибка при добавлении пользователя:', error);
+    return reply.status(500).send({ error: 'Не удалось создать пользователя' });
+    
+  }
+})
+
+fastify.get('/get-employees',async(request,reply) => {
+  try {
+    const employee = await Employee.findAll()
+    return reply.status(200).send(employee)
+  } catch (error) {
+            console.error('Ошибка при добавлении пользователя:', error);
+    return reply.status(500).send({ error: 'Не удалось создать пользовате'})
+  }
+})
 
 const start = async () => {
   try {
